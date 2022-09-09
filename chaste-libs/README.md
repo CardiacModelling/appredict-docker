@@ -1,6 +1,6 @@
-# `ApPredict` "docker" images.
+# `ApPredict` "chaste-libs" dependencies only.
 
-`ApPredict`'s docker images.
+`ApPredict`'s dependency libraries.
 
 Documentation is available at https://ap-nimbus.readthedocs.io/.
 
