@@ -1,4 +1,4 @@
-FROM  debian:buster-slim
+FROM debian:buster-slim
 
 USER root
 
@@ -6,9 +6,10 @@ RUN echo "deb http://deb.debian.org/debian buster main contrib non-free" >> /etc
 
 # Install dependencies with recommended, applicable suggested and other useful packages
 RUN apt-get update && \
+    apt-get install -y g++ cmake && \ 
     apt-get install -y --no-install-recommends \ 
-    cmake \
-    g++ \
+    wget \
+    git \
     petsc-dev \
     libhdf5-dev \
     libboost-serialization-dev \
@@ -22,3 +23,7 @@ RUN apt-get update && \
     python3 \
     python3-venv && \
     rm -rf /var/lib/apt/lists/*
+
+ENV HOME=/home/appredict
+RUN useradd -ms /bin/bash -d $HOME appredict
+USER appredict
