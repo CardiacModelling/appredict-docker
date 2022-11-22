@@ -1,93 +1,63 @@
-FROM cardiacmodelling/appredict-chaste-libs:0.0.4
+FROM cardiacmodelling/appredict-chaste-libs:0.0.5
 
 ################################################################################
 # Modifiable (e.g. via command line) args.                                     #
 ################################################################################
 
-ARG appredict_hash=9599e97929d8b684281771d916699a78e4bb6dca
+ARG appredict_hash=250e593aede8be32d610def1ecb280e77f15f3c0
 ARG appredict_branch=master
-ARG chaste_hash=682dce06c8274d86cbd3cba0e14afc3824687776
-ARG chaste_branch=develop
+ARG chaste_tag=2021.1
 ARG build_processors=1
 
 ################################################################################
 # Local vars (not for modification!)                                           #
 ################################################################################
 
-ARG home_dir=/home/appredict
-ARG dir_appredict="${home_dir}/apps/ApPredict"
-ARG dir_build="${home_dir}/build"
-ARG dir_chaste_libs="${home_dir}/chaste-libs"
+ENV dir_appredict="${HOME}/apps/ApPredict"
+ARG dir_build="${HOME}/build"
 
 ################################################################################
 # 1. Build ApPredict from source                                               #
 ################################################################################
 
-USER root
-# See http://nl.alpinelinux.org/alpine/v3.8/main/x86_64/   <-- Note: v3.8!
-RUN apk add --no-cache git libexecinfo-dev nano scons && rm -f /usr/bin/python && ln -s /usr/bin/python3 /usr/bin/python
-
-USER appredict
-
-RUN mkdir -p ${dir_build}
-
-COPY --chown=appredict:appredict default.py.patch ${dir_build}/default.py.patch
-
 #------------------------------------------------------------------------------#
 # 1.1. Download Chaste & ApPredict source                                      #
 #------------------------------------------------------------------------------#
-RUN cd ${dir_build} && \
-    git clone -b ${chaste_branch} https://github.com/Chaste/Chaste.git Chaste && \
-    cd Chaste && \
-    git checkout ${chaste_hash} && \
-    git submodule update --init && \
-    cd .. && \
-    git clone -b ${appredict_branch} --recursive https://github.com/Chaste/ApPredict.git && \
-    cd ApPredict && \
-    git checkout ${appredict_hash} && \
-    cd src/cellml/cellml/ && \
-    find . ! -name shannon_wang_puglisi_weber_bers_2004.cellml ! -name ten_tusscher_model_2006_epi.cellml ! -name mahajan_shiferaw_2008.cellml ! -name hund_rudy_2004.cellml ! -name grandi_pasqualini_bers_2010_ss.cellml ! -name ohara_rudy_2011_endo.cellml ! -name paci_hyttinen_aaltosetala_severi_ventricularVersion.cellml ! -name ohara_rudy_cipa_v1_2017.cellml -delete
+WORKDIR ${HOME}
+RUN git clone -b ${chaste_tag} --recursive --depth 1 https://github.com/Chaste/Chaste.git Chaste
 
-#------------------------------------------------------------------------------#
-# 1.2. Download additional models                                              #
-#------------------------------------------------------------------------------#
+WORKDIR ${HOME}/Chaste/projects
+RUN git clone -b ${appredict_branch} --recursive https://github.com/Chaste/ApPredict.git
 
-# Bring in your own additional models here.
-# Please note: cellml file names must be different from those in section 1.1.
-# For example the following would pull in faber_rudy_2000.cellml from the chaste  cellml repository:
-# RUN cd ${dir_build}/ApPredict/src/extra_models && wget https://raw.githubusercontent.com/Chaste/cellml/master/cellml/faber_rudy_2000.cellml
+WORKDIR ${HOME}/Chaste/projects/ApPredict
+RUN git checkout ${appredict_hash}
 
-#------------------------------------------------------------------------------#
-# 1.3. Build ApPredict and deploy                                              #
-#------------------------------------------------------------------------------#
-RUN cd ${dir_build} && \
-    sed -i -- "s|<chaste-libs-dir>|${dir_chaste_libs}/|g" default.py.patch && \
-    patch -p0 < default.py.patch && \
-    ln -sv ../../ApPredict Chaste/projects/ && \
-    export USER=appredict && \
-    export CHASTE_LIBS=${dir_chaste_libs} && \
-    export LD_LIBRARY_PATH=${CHASTE_LIBS}/lib && \
-    export PATH=${CHASTE_LIBS}/bin:${PATH} && \
-    cd Chaste && \
-    scons -j${build_processors} cl=1 b=GccOpt exe=1 projects/ApPredict/apps/src && \
-    cd .. && \
-    rm default.py.patch
+WORKDIR ${HOME}/Chaste/projects/ApPredict/src/cellml/cellml/
+RUN find . ! -name shannon_wang_puglisi_weber_bers_2004.cellml ! -name ten_tusscher_model_2006_epi.cellml ! -name mahajan_shiferaw_2008.cellml ! -name hund_rudy_2004.cellml ! -name grandi_pasqualini_bers_2010_ss.cellml ! -name ohara_rudy_2011_endo.cellml ! -name paci_hyttinen_aaltosetala_severi_ventricularVersion.cellml ! -name ohara_rudy_cipa_v1_2017.cellml -delete
 
-# Make the script directory writable so as to allow ApPredict to potentially
-# download a lookup table manifest and table.
+##------------------------------------------------------------------------------#
+## 1.2. Build ApPredict and deploy                                              #
+##------------------------------------------------------------------------------#
 
-RUN mkdir -p ${dir_appredict}/libs && \
-    chmod o+rwx ${dir_appredict}
+RUN mkdir -p ${dir_build}
+WORKDIR ${dir_build}
+RUN cmake -j ${build_processors} \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DChaste_ERROR_ON_WARNING=OFF \
+    -DChaste_UPDATE_PROVENANCE=ON \
+    -DChaste_USE_VTK=OFF \
+    --target ApPredict \
+    ../Chaste
 
+RUN make -j ${build_processors} ApPredict
+
+RUN mkdir -p ${dir_appredict}
 COPY --chown=appredict:appredict ApPredict.sh ${dir_appredict}/ApPredict.sh
 
-RUN sed -i -- "s|<chaste-libs-dir>|${dir_chaste_libs}|g" ${dir_appredict}/ApPredict.sh && \
-    ln -s ${dir_build}/ApPredict/apps/src/ApPredict ${dir_appredict}/ && \
-    ln -s ${dir_build}/Chaste/lib/*.so ${dir_appredict}/libs/ && \
-    mkdir -p ${dir_build}/Chaste/heart/build/optimised/dynamic/ && \
-    chmod o+rwX ${dir_build}/Chaste/heart/build/optimised/dynamic/ && \
-    chmod o+rwX ${dir_build}/Chaste/heart/dynamic/ 
+RUN ln -s ${dir_build}/projects/ApPredict/apps/ApPredict ${dir_appredict}/ 
+
+RUN rm ${HOME}/Chaste -Rf
 
 ENV CHASTE_TEST_OUTPUT=${dir_appredict}/testoutput
 
-WORKDIR ${home_dir}
+WORKDIR ${HOME}
