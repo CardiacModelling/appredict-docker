@@ -15,9 +15,6 @@ while [[ -L "$script" ]]; do script=$(readlink -n "$script"); done
 script_path=$(2>/dev/null cd "${script%/*}" >&2; echo "`pwd -P`/${script##*/}")
 script_dir=$(dirname "$script_path")
 
-#Set the LD_LIBRARY_PATH and run Chaste
-export LD_LIBRARY_PATH="$script_dir/libs":<chaste-libs-dir>/lib
-
 #Inform the user where the output will appear
 if [ -z "$CHASTE_TEST_OUTPUT" ]; then
   echo "\$CHASTE_TEST_OUTPUT is currently unset.  Your output will appear in ./testoutput"
