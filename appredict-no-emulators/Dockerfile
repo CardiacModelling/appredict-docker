@@ -4,8 +4,7 @@ FROM cardiacmodelling/appredict-chaste-libs:0.0.5
 # Modifiable (e.g. via command line) args.                                     #
 ################################################################################
 
-ARG appredict_hash=250e593aede8be32d610def1ecb280e77f15f3c0
-ARG appredict_branch=master
+ARG appredict_tag=v2021.1
 ARG chaste_tag=2021.1
 ARG build_processors=1
 
@@ -27,10 +26,7 @@ WORKDIR ${HOME}
 RUN git clone -b ${chaste_tag} --recursive --depth 1 https://github.com/Chaste/Chaste.git Chaste
 
 WORKDIR ${HOME}/Chaste/projects
-RUN git clone -b ${appredict_branch} --recursive https://github.com/Chaste/ApPredict.git
-
-WORKDIR ${HOME}/Chaste/projects/ApPredict
-RUN git checkout ${appredict_hash}
+RUN git clone -b ${appredict_tag} --recursive --depth 1 https://github.com/Chaste/ApPredict.git
 
 WORKDIR ${HOME}/Chaste/projects/ApPredict/src/cellml/cellml/
 RUN find . ! -name shannon_wang_puglisi_weber_bers_2004.cellml ! -name ten_tusscher_model_2006_epi.cellml ! -name mahajan_shiferaw_2008.cellml ! -name hund_rudy_2004.cellml ! -name grandi_pasqualini_bers_2010_ss.cellml ! -name ohara_rudy_2011_endo.cellml ! -name paci_hyttinen_aaltosetala_severi_ventricularVersion.cellml ! -name ohara_rudy_cipa_v1_2017.cellml -delete
@@ -46,7 +42,6 @@ RUN cmake -j ${build_processors} \
     -DChaste_ERROR_ON_WARNING=OFF \
     -DChaste_UPDATE_PROVENANCE=ON \
     -DChaste_USE_VTK=OFF \
-    --target ApPredict \
     ../Chaste
 
 RUN make -j ${build_processors} ApPredict
@@ -55,8 +50,6 @@ RUN mkdir -p ${dir_appredict}
 COPY --chown=appredict:appredict ApPredict.sh ${dir_appredict}/ApPredict.sh
 
 RUN ln -s ${dir_build}/projects/ApPredict/apps/ApPredict ${dir_appredict}/ 
-
-RUN rm ${HOME}/Chaste -Rf
 
 ENV CHASTE_TEST_OUTPUT=${dir_appredict}/testoutput
 
