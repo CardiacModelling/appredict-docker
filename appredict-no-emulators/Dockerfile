@@ -48,6 +48,7 @@ RUN make -j ${build_processors} ApPredict
 
 RUN mkdir -p ${dir_appredict}
 COPY --chown=appredict:appredict ApPredict.sh ${dir_appredict}/ApPredict.sh
+RUN chmod +x ${dir_appredict}/ApPredict.sh
 
 RUN ln -s ${dir_build}/projects/ApPredict/apps/ApPredict ${dir_appredict}/ 
 
