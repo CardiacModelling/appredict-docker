@@ -1,4 +1,4 @@
-FROM cardiacmodelling/appredict-chaste-libs:1.0.0
+FROM cardiacmodelling/appredict-chaste-libs:2.0.0
 
 ################################################################################
 # Modifiable (e.g. via command line) args.                                     #
