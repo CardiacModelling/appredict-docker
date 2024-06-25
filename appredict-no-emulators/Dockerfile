@@ -4,8 +4,8 @@ FROM cardiacmodelling/appredict-chaste-libs:1.0.0
 # Modifiable (e.g. via command line) args.                                     #
 ################################################################################
 
-ARG appredict_tag=v2021.1
-ARG chaste_tag=2021.1
+ARG appredict_tag=v2024.1
+ARG chaste_tag=2024.1
 ARG build_processors=1
 
 ################################################################################
