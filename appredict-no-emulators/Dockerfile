@@ -37,7 +37,7 @@ RUN find . ! -name shannon_wang_puglisi_weber_bers_2004.cellml ! -name ten_tussc
 
 RUN mkdir -p ${dir_build}
 WORKDIR ${dir_build}
-RUN cmake -j ${build_processors} \
+RUN cmake \
     -DCMAKE_BUILD_TYPE=Release \
     -DChaste_ERROR_ON_WARNING=OFF \
     -DChaste_UPDATE_PROVENANCE=ON \
