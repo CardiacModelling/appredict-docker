@@ -29,6 +29,10 @@ jobs:
           context: ./appredict-no-emulators/
           pull: true
           push: true
+          build-args: |
+            appredict_tag=v2024.1
+            chaste_tag=2024.1
+            build_processors=4
           tags: |
             cardiacmodelling/appredict-no-emulators:2.0.0
             cardiacmodelling/appredict-no-emulators:latest
