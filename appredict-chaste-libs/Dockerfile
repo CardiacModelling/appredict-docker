@@ -1,13 +1,13 @@
-FROM debian:buster-slim
+FROM debian:bullseye-slim
 
 USER root
 
-RUN echo "deb http://deb.debian.org/debian buster main contrib non-free" >> /etc/apt/sources.list
+RUN echo "deb http://deb.debian.org/debian bullseye main contrib non-free" >> /etc/apt/sources.list
 
 # Install dependencies with recommended, applicable suggested and other useful packages
 RUN apt-get update && \
-    apt-get install -y g++ cmake && \ 
-    apt-get install -y --no-install-recommends \ 
+    apt-get install -y g++ cmake && \
+    apt-get install -y --no-install-recommends \
     wget \
     git \
     petsc-dev \

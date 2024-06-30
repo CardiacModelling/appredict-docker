@@ -29,6 +29,8 @@ jobs:
           context: ./appredict-with-emulators/
           pull: true
           push: true
+          build-args: |
+            build_processors=4
           tags: |
             cardiacmodelling/appredict-with-emulators:2.0.0
             cardiacmodelling/appredict-with-emulators:latest

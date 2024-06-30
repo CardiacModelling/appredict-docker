@@ -1,11 +1,11 @@
-FROM cardiacmodelling/appredict-chaste-libs:1.0.0
+FROM cardiacmodelling/appredict-chaste-libs:2.0.0
 
 ################################################################################
 # Modifiable (e.g. via command line) args.                                     #
 ################################################################################
 
-ARG appredict_tag=v2021.1
-ARG chaste_tag=2021.1
+ARG appredict_tag=v2024.1
+ARG chaste_tag=2024.1
 ARG build_processors=1
 
 ################################################################################
@@ -37,7 +37,7 @@ RUN find . ! -name shannon_wang_puglisi_weber_bers_2004.cellml ! -name ten_tussc
 
 RUN mkdir -p ${dir_build}
 WORKDIR ${dir_build}
-RUN cmake -j ${build_processors} \
+RUN cmake \
     -DCMAKE_BUILD_TYPE=Release \
     -DChaste_ERROR_ON_WARNING=OFF \
     -DChaste_UPDATE_PROVENANCE=ON \
