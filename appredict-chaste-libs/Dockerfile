@@ -1,5 +1,7 @@
 FROM debian:bullseye-slim
 
+LABEL version="2.0.0"
+
 USER root
 
 RUN echo "deb http://deb.debian.org/debian bullseye main contrib non-free" >> /etc/apt/sources.list
