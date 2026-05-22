@@ -1,3 +1,10 @@
+# Building the image locally:
+# cd appredict-with-emulators
+# docker build -t cardiacmodelling/appredict-with-emulators:local .
+
+# Starting a container interactively:
+# docker run --init -it cardiacmodelling/appredict-with-emulators:local /bin/bash
+
 FROM cardiacmodelling/appredict-no-emulators:2.0.0
 
 LABEL version="2.0.0"
