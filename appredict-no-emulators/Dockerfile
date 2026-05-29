@@ -1,4 +1,13 @@
+# Building the image locally:
+# cd appredict-no-emulators
+# docker build -t cardiacmodelling/appredict-no-emulators:local .
+
+# Starting a container interactively:
+# docker run --init -it cardiacmodelling/appredict-no-emulators:local /bin/bash
+
 FROM cardiacmodelling/appredict-chaste-libs:2.0.0
+
+LABEL version="2.0.0"
 
 ################################################################################
 # Modifiable (e.g. via command line) args.                                     #

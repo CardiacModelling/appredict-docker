@@ -1,4 +1,13 @@
+# Building the image locally:
+# cd appredict-chaste-libs
+# docker build -t cardiacmodelling/appredict-chaste-libs:local .
+
+# Starting a container interactively:
+# docker run --init -it cardiacmodelling/appredict-chaste-libs:local /bin/bash
+
 FROM debian:bullseye-slim
+
+LABEL version="2.0.0"
 
 USER root
 
