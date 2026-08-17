@@ -7,7 +7,7 @@
 
 FROM debian:bullseye-slim
 
-LABEL version="2.0.0"
+LABEL version="2.1.0"
 
 USER root
 
