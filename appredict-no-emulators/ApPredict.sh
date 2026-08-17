@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # A wrapper script for Chaste that can figure out where it really lives on the
-# filesystem, set the LD_LIBRARY_PATH to the correct subfolder and run Chaste.
+# filesystem, and run Chaste from that directory.
 
 #IFS=" \t\n"
 #declare -x PATH=/bin:/usr/bin
