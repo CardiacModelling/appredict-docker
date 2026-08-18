@@ -5,9 +5,9 @@
 # Starting a container interactively:
 # docker run --init -it cardiacmodelling/appredict-with-emulators:local /bin/bash
 
-FROM cardiacmodelling/appredict-no-emulators:2.0.0
+FROM cardiacmodelling/appredict-no-emulators:2.1.0
 
-LABEL version="2.0.0"
+LABEL version="2.1.0"
 
 ################################################################################
 # Modifiable (e.g. via command line) args.                                     #

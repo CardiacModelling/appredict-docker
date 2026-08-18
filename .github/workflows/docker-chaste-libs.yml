@@ -21,7 +21,7 @@ jobs:
       sign: auto
       meta-images: cardiacmodelling/appredict-chaste-libs
       meta-tags: |
-        type=semver,pattern={{version}},value=2.0.0
+        type=semver,pattern={{version}},value=2.1.0
     secrets:
       registry-auths: |
         - registry: docker.io
